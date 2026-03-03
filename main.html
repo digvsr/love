@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Love Meter</title>
+
+<!-- Sentiment Analysis Library -->
+<script src="https://cdn.jsdelivr.net/npm/sentiment@5.0.2/build/sentiment.min.js"></script>
+
+<style>
+body {
+    margin: 0;
+    background: #F5E6D3;
+    font-family: 'Segoe UI', sans-serif;
+    text-align: center;
+    overflow: hidden;
+}
+
+/* Intro Screen */
+#intro {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.heart {
+    font-size: 90px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+    100% { transform: scale(1); }
+}
+
+/* Main Section */
+#main {
+    display: none;
+    padding-top: 100px;
+}
+
+input {
+    padding: 12px;
+    width: 300px;
+    border-radius: 20px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    background: #d4a373;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+button:hover {
+    background: #c08b5c;
+}
+
+/* Meter */
+.meter-container {
+    width: 320px;
+    height: 25px;
+    background: #ddd;
+    margin: 25px auto;
+    border-radius: 30px;
+    overflow: hidden;
+}
+
+#meter {
+    height: 100%;
+    width: 0%;
+    border-radius: 30px;
+    transition: 0.8s ease;
+}
+
+#emoji {
+    font-size: 40px;
+    margin-top: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="intro">
+    <div class="heart">❤️</div>
+</div>
+
+<div id="main">
+    <h2>Say it 💌</h2>
+    <input type="text" id="loveInput" placeholder="Express your feelings...">
+    <br>
+    <button onclick="checkLove()">Check Meter</button>
+
+    <div class="meter-container">
+        <div id="meter"></div>
+    </div>
+
+    <div id="emoji"></div>
+</div>
+
+<script>
+// Reveal after 3 seconds
+setTimeout(() => {
+    document.getElementById("intro").style.display = "none";
+    document.getElementById("main").style.display = "block";
+    document.body.style.overflow = "auto";
+}, 3000);
+
+function checkLove() {
+
+    const sentiment = new Sentiment();
+    let text = document.getElementById("loveInput").value;
+    let result = sentiment.analyze(text);
+
+    let score = result.score;  // Can be negative or positive
+    let meter = document.getElementById("meter");
+    let emoji = document.getElementById("emoji");
+
+    // Normalize score to percentage (limit range)
+    let percentage = Math.min(Math.max((score + 5) * 10, 0), 100);
+
+    meter.style.width = percentage + "%";
+
+    if (score >= 3) {
+        meter.style.background = "green";
+        emoji.innerHTML = "😍💖";
+    }
+    else if (score >= 0) {
+        meter.style.background = "orange";
+        emoji.innerHTML = "🙂";
+    }
+    else {
+        meter.style.background = "red";
+        emoji.innerHTML = "😡💔";
+    }
+}
+</script>
+
+</body>
+</html>
